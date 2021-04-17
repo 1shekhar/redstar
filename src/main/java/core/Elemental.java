@@ -8,6 +8,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.*;
 import java.time.Duration;
 import java.util.Properties;
@@ -18,6 +19,8 @@ public class  Elemental {
     public static String browserName;
     public static LocatorParser locatorParser;
     public static Capabilities caps;
+    public static boolean pageState=false;
+    public static String embURL=null;
 
 
     //Use maven dependency to create driver
@@ -53,8 +56,9 @@ public class  Elemental {
         }
     }
 
-    public void OpenPlatform() {
-        driver.get(locatorParser.getSingularProperty("url"));
+    public void OpenPlatform(String appURL) {
+        embURL=appURL;
+        driver.get(embURL);
         waitTillWholePageIsLoaded();
     }
 
@@ -85,6 +89,8 @@ public class  Elemental {
     public void tearDown() {
         try {
             caps = ((RemoteWebDriver) driver).getCapabilities();
+            //Currently done only for Google chrome.
+            //To DO: Generate Env Props for Firefox and MS Edge
             CreateEnvironmentProperties();
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,7 +109,7 @@ public class  Elemental {
             try
             {
                 Properties prop = new Properties();
-                prop.setProperty("Embold URL",locatorParser.getSingularProperty("url"));
+                prop.setProperty("Embold URL",embURL);
                 prop.setProperty("Platform", System.getProperty("os.name"));
                 prop.setProperty("BrowserName", String.valueOf(caps.getCapability("browserName")));
                 prop.setProperty("BrowserVersion", String.valueOf(caps.getCapability("browserVersion")));

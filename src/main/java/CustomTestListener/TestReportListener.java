@@ -65,13 +65,9 @@ public class TestReportListener extends Elemental implements ITestListener
 
     @Override
     public void onStart(ITestContext context) {
-        System.out.println("Test Execution Started for Embold V2 on "
-                +locatorParser.getSingularProperty("url"));
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        System.out.println("Test Execution finished for Embold V2 on "
-                +locatorParser.getSingularProperty("url"));
     }
 }

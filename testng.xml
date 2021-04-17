@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Embold V2">
-    <test name="Sign In Validations">
+<suite name="V2 Regression Tests">
+    <parameter name="browser" value="${browser}"/>
+    <parameter name="appURL" value="${appURL}"/>
+    <test name="Sign In and Sign Up Validation">
         <classes>
+            <class name="BeginTestExecution"/>
+            <class name="EmboldSignUpPageTests"/>
             <class name="EmboldSignInPageTests"/>
+            <class name="EndTestExecution"/>
         </classes>
     </test>
 </suite>
