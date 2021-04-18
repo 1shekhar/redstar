@@ -24,8 +24,14 @@ public class GitHubSignInPage extends Elemental {
 
     public void signInToEmboldUsingGitHubCredentials(String username, String password)
     {
+        /*To do: 1. Encrypt and provide credentials. 2. Pass credentials via commandline
+        3. Simplify Login with independent singular methods.*/
         DisplayGitHubUsernameField().sendKeys(username);
         DisplayGitHubPasswordField().sendKeys(password);
+        DisplayGitHubSignInButton().click();
+         /*To DO: Logic to validate API response. Sometimes App is up but DB/Node gets crashed and user is
+        unable to login to Embold. Can be validated using API endpoint.*/
+        WaitTillPresenceOfElementIsLocated("loggedInUserAvatar");
     }
 
 }

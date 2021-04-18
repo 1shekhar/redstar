@@ -3,21 +3,16 @@
 <suite name="V2 Regression Tests">
     <parameter name="browser" value="${browser}"/>
     <parameter name="appURL" value="${appURL}"/>
+    <!--EmboldSignOutTests are exclude for time being since pew sanity tests have already created SCM sessions.
+    SignOut tests need clear session. We will handle this later.
+    <class name="EmboldSignOutTests"/>-->
 
-    <test name="Embold Sign Up Validation">
+    <test name="Embold V2 Sanity">
         <classes>
             <class name="BeginTestExecution"/>
             <class name="EmboldSignUpPageTests"/>
-            <class name="EndTestExecution"/>
-        </classes>
-    </test>
-
-    <test name="Embold Sign In Validation">
-        <classes>
-            <class name="BeginTestExecution"/>
             <class name="EmboldSignInPageTests"/>
             <class name="EndTestExecution"/>
         </classes>
     </test>
-
 </suite>

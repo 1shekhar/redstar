@@ -10,11 +10,6 @@ public class RepositoryListPage extends Elemental {
                 getElementLocator("loggedInUserAvatar"));
     }
 
-    public WebElement DisplaySignOutButton() {
-        WaitTillPresenceOfElementIsLocated("signOutButton");
-        return driver.findElement(locatorParser.
-                getElementLocator("signOutButton"));
-    }
     public WebElement DisplayEmboldLogoOnRepositoryListPage()
     {
         WaitTillPresenceOfElementIsLocated("embold_logo_RLPage");

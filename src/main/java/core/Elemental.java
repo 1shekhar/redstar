@@ -7,11 +7,14 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.*;
 import java.time.Duration;
 import java.util.Properties;
+import java.util.function.Function;
 
 public class  Elemental {
 
@@ -75,14 +78,13 @@ public class  Elemental {
 
     public void WaitTillElementIsClickable(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(10))
+        new WebDriverWait(driver, Duration.ofSeconds(30))
                 .until(ExpectedConditions.elementToBeClickable(element));
     }
 
-
     public void WaitTillPresenceOfElementIsLocated(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(10))
+        new WebDriverWait(driver, Duration.ofSeconds(30))
                 .until(ExpectedConditions.presenceOfElementLocated(element));
     }
 

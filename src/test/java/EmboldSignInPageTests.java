@@ -5,9 +5,8 @@ import io.qameta.allure.*;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.EmboldSignInPage;
-import pages.GitHubSignInPage;
-import pages.RepositoryListPage;
+import pages.*;
+
 import java.io.IOException;
 
 @Listeners({TestReportListener.class})
@@ -17,13 +16,17 @@ public class EmboldSignInPageTests extends Elemental {
     static WebElement element;
     EmboldSignInPage signInPage;
     GitHubSignInPage gitHubSignInPage;
+    BitbucketSignInPage bitbucketSignInPage;
     RepositoryListPage repositoryListPage;
+    EmboldSignOutPanel signOutPage;
 
     EmboldSignInPageTests() {
         super();
         signInPage = new EmboldSignInPage();
         gitHubSignInPage = new GitHubSignInPage();
         repositoryListPage = new RepositoryListPage();
+        bitbucketSignInPage = new BitbucketSignInPage();
+        signOutPage = new EmboldSignOutPanel();
         try {
             locatorParser = new LocatorParser("./src/main/resources/Locators.properties");
         } catch (IOException e) {
@@ -107,13 +110,17 @@ public class EmboldSignInPageTests extends Elemental {
     @Severity(SeverityLevel.NORMAL)
     @Step("Check if User is landed on Sign In page.")
     public void ClickOnSignInWithGitHubButtonAndReturnToEmboldSignInPage() {
-        signInPage.DisplaySignInWithGitHubButton().click();
-        WaitTillElementIsClickable("github_signIn_button");
-        Assert.assertEquals(driver.getTitle(), "Sign in to GitHub · GitHub");
-        driver.navigate().back();
-        WaitTillElementIsClickable("github-sign-in-button");
-        driver.navigate().refresh();
-        Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
+        if(signInPage.DisplaySignInWithGitHubButton().isDisplayed())
+        {
+            signInPage.DisplaySignInWithGitHubButton().click();
+            WaitTillElementIsClickable("github_signIn_button");
+            Assert.assertEquals(driver.getTitle(), "Sign in to GitHub · GitHub");
+            driver.navigate().back();
+            WaitTillElementIsClickable("github-sign-in-button");
+            driver.navigate().refresh();
+            Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
+        }
+
     }
 
     @Story("Sign in using GitHub")
@@ -122,40 +129,55 @@ public class EmboldSignInPageTests extends Elemental {
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if user is able to Sign in to Embold using GitHub account credentials.")
     public void SignInToEmboldUsingGitHubAccountCredentials() {
-        signInPage.DisplaySignInWithGitHubButton().click();
+        if(signInPage.DisplaySignInWithGitHubButton().isDisplayed())
+        {
+            signInPage.DisplaySignInWithGitHubButton().click();
+        }
         WaitTillElementIsClickable("github_signIn_button");
-
-        //To do: 1. Encrypt and provide credentials. 2. Pass credentials via commandline
-        //3. Simplify Login with independent singular methods.
-        String username=locatorParser.getSingularProperty("gh_username");
-        String password=locatorParser.getSingularProperty("gh_password");
-
+        String username = locatorParser.getSingularProperty("gh_username");
+        String password = locatorParser.getSingularProperty("gh_password");
         gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
-        gitHubSignInPage.DisplayGitHubSignInButton().click();
-        //To DO: Logic to validate API response. Sometimes App is up but DB/Node gets crashed and user is
-        //unable to login to Embold. Can be validated using API endpoint.
-        String currentTitle=driver.getTitle();
-        String expectedTitle="Embold | Next Level Static Code Analysis";
-        Assert.assertEquals(currentTitle, expectedTitle);
-        if(currentTitle.equals(expectedTitle))
+        Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
+        String actualURL=driver.getCurrentUrl();
+        /*This condition is added to check if user is on RL page. We can assert many such conditions.*/
+        if(actualURL.contains(embURL+"/organization/gh/"))
         {
             pageState=true;
+            repositoryListPage.DisplayUserAvatarInHeader().click();
         }
+        if(pageState)
+        {
+            signOutPage.DisplaySignOutButton().click();
+        }
+        WaitTillPresenceOfElementIsLocated("login_illustration");
     }
 
-    @Story("Sign in using GitHub")
-    @Test(priority = 9, description = "Validate if user signs out from Embold.", dependsOnMethods = {"SignInToEmboldUsingGitHubAccountCredentials"})
-    @Description("Test Description: Validate if user signs out from Embold and redirected to Sing in page.")
+    @Story("Sign in using Bitbucket")
+    @Test(priority = 9, description = "Validate if user is able to Sign in to Embold using Bitbucket account credentials.")
+    @Description("Test Description: User should be able to Sign in to Embold using Bitbucket account credentials")
     @Severity(SeverityLevel.CRITICAL)
-    @Step("Sign out from Embold.")
-    public void SignOutFromEmbold() {
-        //Embold Sign out works totally after this boolean condition. Fails sometimes without it. Find root cause later.
-        if(pageState) {
-            WaitTillPresenceOfElementIsLocated("embold_logo_RLPage");
-            repositoryListPage.DisplayUserAvatarInHeader().click();
-            repositoryListPage.DisplaySignOutButton().click();
-            WebElement element = signInPage.DisplayLoginIllustration();
-            Assert.assertTrue(element.isDisplayed());
+    @Step("Check if user is able to Sign in to Embold using Bitbucket account credentials.")
+    public void SignInToEmboldUsingBitbucketAccountCredentials() {
+        if(signInPage.DisplaySignInWithBitbucketButton().isDisplayed())
+        {
+            signInPage.DisplaySignInWithBitbucketButton().click();
         }
+        WaitTillElementIsClickable("bitbucket_continue_button");
+        String username = locatorParser.getSingularProperty("bitbucket_username");
+        String password = locatorParser.getSingularProperty("bitbucket_password");
+        bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
+        Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
+        String actualURL=driver.getCurrentUrl();
+        /*This condition is added to check if user is on RL page. We can assert many such conditions.*/
+        if(actualURL.contains(embURL+"/organization/bb/"))
+        {
+            pageState=true;
+            repositoryListPage.DisplayUserAvatarInHeader().click();
+        }
+        if(pageState)
+        {
+            signOutPage.DisplaySignOutButton().click();
+        }
+        WaitTillPresenceOfElementIsLocated("login_illustration");
     }
 }

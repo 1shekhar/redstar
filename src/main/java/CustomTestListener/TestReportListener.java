@@ -13,7 +13,7 @@ public class TestReportListener extends Elemental implements ITestListener
 {
     private static String getMethodNameUnderExecution(ITestResult iTestResult)
     {
-        return iTestResult.getMethod().getConstructorOrMethod().getName();
+        return iTestResult.getTestClass().getName()+"."+iTestResult.getMethod().getConstructorOrMethod().getName();
     }
 
     @Attachment (value = "Screenshot", type="image/png")
