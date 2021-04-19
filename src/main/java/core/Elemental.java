@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.io.*;
 import java.time.Duration;
 import java.util.Properties;
@@ -22,12 +21,9 @@ public class  Elemental {
     public static String browserName;
     public static LocatorParser locatorParser;
     public static Capabilities caps;
-    public static boolean pageState=false;
     public static String embURL=null;
     public static boolean ghSignInState=false;
     public static boolean bbSignInState=false;
-
-
 
     //Use maven dependency to create driver
     public void setWebDriver() {
@@ -100,14 +96,17 @@ public class  Elemental {
     public void FluentWaitForWebElement(String elementLocator)
     {
         By element = locatorParser.getElementLocator(elementLocator);
-        Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(60)) // this defines the total amount of time to wait for
-                .pollingEvery(Duration.ofSeconds(2)) // this defines the polling frequency
-                .ignoring(NoSuchElementException.class, TimeoutException.class); // this defines the exception to ignore
-        WebElement foo = fluentWait.until(new Function<WebDriver, WebElement>() {
-            public WebElement apply(WebDriver driver)  //in this method defined your own subjected conditions for which we need to wait for
-            {  return driver.findElement(element);
-            }});
+        Wait<WebDriver> fluentWait = new FluentWait<>(driver)
+                /*Define total time you can wait for*/
+                .withTimeout(Duration.ofSeconds(60))
+                /*Define polling frequency*/
+                .pollingEvery(Duration.ofSeconds(2))
+                /*Define Exceptions to be ignored*/
+                .ignoring(NoSuchElementException.class, TimeoutException.class);
+        WebElement ele = fluentWait.until(driver -> {
+            /*Define subjected conditions for which we need to wait for*/
+            return driver.findElement(element);
+        });
     }
 
     public void WaitTillTextFieldIsReady(String elementLocator) {
