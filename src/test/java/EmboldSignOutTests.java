@@ -6,26 +6,25 @@ import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pages.*;
-
 import java.io.IOException;
 
 @Listeners({TestReportListener.class})
 @Epic("Regression Tests")
-@Feature("Sign out from Embold")
+@Feature("Embold Sign Out")
 public class EmboldSignOutTests extends Elemental {
-    EmboldSignInPage signInPage1;
-    GitHubSignInPage gitHubSignInPage1;
-    BitbucketSignInPage bitbucketSignInPage1;
-    EmboldSignOutPanel signOutPage1;
-    RepositoryListPage repositoryListPage1;
+    EmboldSignInPage signInPage;
+    GitHubSignInPage gitHubSignInPage;
+    BitbucketSignInPage bitbucketSignInPage;
+    EmboldSignOutPanel signOutPage;
+    RepositoryListPage repositoryListPage;
 
     EmboldSignOutTests() {
         super();
-        signInPage1 = new EmboldSignInPage();
-        gitHubSignInPage1 = new GitHubSignInPage();
-        repositoryListPage1 = new RepositoryListPage();
-        signOutPage1 = new EmboldSignOutPanel();
-        bitbucketSignInPage1 = new BitbucketSignInPage();
+        signInPage = new EmboldSignInPage();
+        gitHubSignInPage = new GitHubSignInPage();
+        repositoryListPage = new RepositoryListPage();
+        signOutPage = new EmboldSignOutPanel();
+        bitbucketSignInPage = new BitbucketSignInPage();
         try {
             locatorParser = new LocatorParser("./src/main/resources/Locators.properties");
         } catch (IOException e) {
@@ -39,20 +38,26 @@ public class EmboldSignOutTests extends Elemental {
     @Severity(SeverityLevel.CRITICAL)
     @Step("Sign in and sign out from Embold.")
     public void EmboldSignOutValidationForGitHubAccount() {
-        if (signInPage1.DisplaySignInWithGitHubButton().isDisplayed()) {
-            signInPage1.DisplaySignInWithGitHubButton().click();
-            WaitTillElementIsClickable("github_signIn_button");
-            String username = locatorParser.getSingularProperty("gh_username");
-            String password = locatorParser.getSingularProperty("gh_password");
-            gitHubSignInPage1.signInToEmboldUsingGitHubCredentials(username, password);
-            repositoryListPage1.DisplayUserAvatarInHeader().click();
-            signOutPage1.DisplaySignOutButton().click();
-            WaitTillPresenceOfElementIsLocated("login_illustration");
-            //Add proper assertion
-            String currentTitle = driver.getTitle();
-            String expectedTitle = "Embold | Next Level Static Code Analysis";
-            Assert.assertEquals(currentTitle, expectedTitle);
+        if(driver.getCurrentUrl().contains("auth"))
+        {
+            signInPage.DisplaySignInWithGitHubButton().click();
+            if (!driver.getCurrentUrl().contains("gh")) {
+                String username = locatorParser.getSingularProperty("gh_username");
+                String password = locatorParser.getSingularProperty("gh_password");
+                gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
+            }
+            ghSignInState=true;
         }
+        if(ghSignInState)
+        {
+            repositoryListPage.DisplayUserAvatarInHeader().click();
+            signOutPage.DisplaySignOutButton().click();
+            ghSignInState=false;
+        }
+        //Add proper assertion
+        String currentTitle = driver.getTitle();
+        String expectedTitle = "Embold | Next Level Static Code Analysis";
+        Assert.assertEquals(currentTitle, expectedTitle);
     }
 
     @Story("Sign out from Embold")
@@ -60,19 +65,34 @@ public class EmboldSignOutTests extends Elemental {
     @Description("Test Description: Validate if user signs in and signs out from Embold using Bitbucket credentials")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Sign in and sign out from Embold.")
-    public void EmboldSignOutValidationForBitbucketAccount() {
-        if (signInPage1.DisplaySignInWithBitbucketButton().isDisplayed()) {
-            signInPage1.DisplaySignInWithBitbucketButton().click();
-            String username = locatorParser.getSingularProperty("bitbucket_username");
-            String password = locatorParser.getSingularProperty("bitbucket_password");
-            bitbucketSignInPage1.signInToEmboldUsingBitbucketCredentials(username, password);
-            repositoryListPage1.DisplayUserAvatarInHeader().click();
-            signOutPage1.DisplaySignOutButton().click();
-            WaitTillPresenceOfElementIsLocated("login_illustration");
-            //Add proper assertion
-            String currentTitle = driver.getTitle();
-            String expectedTitle = "Embold | Next Level Static Code Analysis";
-            Assert.assertEquals(currentTitle, expectedTitle);
+    public void EmboldSignOutValidationForBitbucketAccount()  {
+        if(driver.getCurrentUrl().contains("auth"))
+        {
+            signInPage.DisplaySignInWithBitbucketButton().click();
+            try {
+                /*Without sleep, enable to perform sign out. To do:Find alternative later.
+                * This is happening only for BitBucket re-login*/
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!driver.getCurrentUrl().contains("/organization/bb")) {
+                String username = locatorParser.getSingularProperty("bitbucket_username");
+                String password = locatorParser.getSingularProperty("bitbucket_password");
+                bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
+            }
+            bbSignInState=true;
         }
+        Assert.assertTrue(repositoryListPage.DisplayEmboldLogoOnRepositoryListPage().isDisplayed());
+        if(bbSignInState)
+        {
+            repositoryListPage.DisplayUserAvatarInHeader().click();
+            signOutPage.DisplaySignOutButton().click();
+            bbSignInState=false;
+        }
+        //Add proper assertion
+        String currentTitle = driver.getTitle();
+        String expectedTitle = "Embold | Next Level Static Code Analysis";
+        Assert.assertEquals(currentTitle, expectedTitle);
     }
 }

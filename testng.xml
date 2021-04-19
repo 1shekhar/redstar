@@ -20,4 +20,11 @@
         </classes>
     </test>
 
+    <test name="Embold Sign out Validation">
+        <classes>
+            <class name="BeginTestExecution"/>
+            <class name="EmboldSignOutTests"/>
+            <class name="EndTestExecution"/>
+        </classes>
+    </test>
 </suite>

@@ -35,7 +35,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(description = "Validate page title - Sign In page.")
+    @Test(priority = 1,description = "Validate page title - Sign In page.")
     @Description("Test Description: Page title for Sign In page should be 'Embold | Next Level Static Code Analysis'")
     @Severity(SeverityLevel.TRIVIAL)
     @Step("Validate if page title shown is correct for Embold Sign In page.")
@@ -45,7 +45,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 1, description = "Validate if login illustration is displayed.")
+    @Test(priority = 2, description = "Validate if login illustration is displayed.")
     @Description("Test Description: Login illustration should be displayed within Sign In window.")
     @Severity(SeverityLevel.MINOR)
     @Step("Check if login illustration is displayed in Sign In window.")
@@ -55,7 +55,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 2, description = "Validate if Embold logo is displayed.")
+    @Test(priority = 3, description = "Validate if Embold logo is displayed.")
     @Description("Test Description: Embold logo is displayed on the top left corner of the page.")
     @Severity(SeverityLevel.MINOR)
     @Step("Check if Embold logo is displayed on top left corner of the page.")
@@ -65,7 +65,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 3, description = "Validate if Sign In Label is displayed.")
+    @Test(priority = 4, description = "Validate if Sign In Label is displayed.")
     @Description("Test Description: Sign In Label should be displayed above login window.")
     @Severity(SeverityLevel.MINOR)
     @Step("Check if Sign In label is displayed above Sign In window.")
@@ -75,7 +75,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 4, description = "Validate if Sign In with GitHub button is displayed.")
+    @Test(priority = 5, description = "Validate if Sign In with GitHub button is displayed.")
     @Description("Test Description: Sign In with GitHub button should be displayed.")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if Sign In with GitHub button is displayed in Sign In window.")
@@ -85,7 +85,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 5, description = "Validate if Sign In with Bitbucket button is displayed.")
+    @Test(priority = 6, description = "Validate if Sign In with Bitbucket button is displayed.")
     @Description("Test Description: Sign In with Bitbucket button should be displayed.")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if Sign In with Bitbucket button is displayed in Sign In window.")
@@ -95,7 +95,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign In page Web element validations")
-    @Test(priority = 6, description = "Validate if Sign up link is displayed.")
+    @Test(priority = 7, description = "Validate if Sign up link is displayed.")
     @Description("Test Description: Sign up link should be displayed below login window.")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if Sign up link is displayed below Sign In window.")
@@ -105,7 +105,7 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign in using GitHub")
-    @Test(priority = 7, description = "Validate browser back button for Sign In page.")
+    @Test(priority = 8, description = "Validate browser back button for Sign In page.")
     @Description("Test Description: User should land on Sign In page.")
     @Severity(SeverityLevel.NORMAL)
     @Step("Check if User is landed on Sign In page.")
@@ -124,60 +124,52 @@ public class EmboldSignInPageTests extends Elemental {
     }
 
     @Story("Sign in using GitHub")
-    @Test(priority = 8, description = "Validate if user is able to Sign in to Embold using GitHub account credentials.")
+    @Test(priority = 9, description = "Validate if user is able to Sign in to Embold using GitHub account credentials.")
     @Description("Test Description: User should be able to Sign in to Embold using GitHub account credentials")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if user is able to Sign in to Embold using GitHub account credentials.")
     public void SignInToEmboldUsingGitHubAccountCredentials() {
-        if(signInPage.DisplaySignInWithGitHubButton().isDisplayed())
+        if(driver.getCurrentUrl().contains("auth"))
         {
             signInPage.DisplaySignInWithGitHubButton().click();
+            if (!driver.getCurrentUrl().contains("gh")) {
+                String username = locatorParser.getSingularProperty("gh_username");
+                String password = locatorParser.getSingularProperty("gh_password");
+                gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
+            }
+            ghSignInState=true;
         }
-        WaitTillElementIsClickable("github_signIn_button");
-        String username = locatorParser.getSingularProperty("gh_username");
-        String password = locatorParser.getSingularProperty("gh_password");
-        gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
-        Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
-        String actualURL=driver.getCurrentUrl();
-        /*This condition is added to check if user is on RL page. We can assert many such conditions.*/
-        if(actualURL.contains(embURL+"/organization/gh/"))
+        Assert.assertTrue(repositoryListPage.DisplayEmboldLogoOnRepositoryListPage().isDisplayed());
+        if(ghSignInState)
         {
-            pageState=true;
             repositoryListPage.DisplayUserAvatarInHeader().click();
-        }
-        if(pageState)
-        {
             signOutPage.DisplaySignOutButton().click();
+            ghSignInState=false;
         }
-        WaitTillPresenceOfElementIsLocated("login_illustration");
     }
 
     @Story("Sign in using Bitbucket")
-    @Test(priority = 9, description = "Validate if user is able to Sign in to Embold using Bitbucket account credentials.")
+    @Test(priority = 10, description = "Validate if user is able to Sign in to Embold using Bitbucket account credentials.")
     @Description("Test Description: User should be able to Sign in to Embold using Bitbucket account credentials")
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if user is able to Sign in to Embold using Bitbucket account credentials.")
     public void SignInToEmboldUsingBitbucketAccountCredentials() {
-        if(signInPage.DisplaySignInWithBitbucketButton().isDisplayed())
+        if(driver.getCurrentUrl().contains("auth"))
         {
             signInPage.DisplaySignInWithBitbucketButton().click();
+            if (!driver.getCurrentUrl().contains("bb")) {
+                String username = locatorParser.getSingularProperty("bitbucket_username");
+                String password = locatorParser.getSingularProperty("bitbucket_password");
+                bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
+            }
+            bbSignInState=true;
         }
-        WaitTillElementIsClickable("bitbucket_continue_button");
-        String username = locatorParser.getSingularProperty("bitbucket_username");
-        String password = locatorParser.getSingularProperty("bitbucket_password");
-        bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
-        Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
-        String actualURL=driver.getCurrentUrl();
-        /*This condition is added to check if user is on RL page. We can assert many such conditions.*/
-        if(actualURL.contains(embURL+"/organization/bb/"))
+        Assert.assertTrue(repositoryListPage.DisplayEmboldLogoOnRepositoryListPage().isDisplayed());
+        if(bbSignInState)
         {
-            pageState=true;
             repositoryListPage.DisplayUserAvatarInHeader().click();
-        }
-        if(pageState)
-        {
             signOutPage.DisplaySignOutButton().click();
+            bbSignInState=false;
         }
-        WaitTillPresenceOfElementIsLocated("login_illustration");
     }
 }

@@ -12,6 +12,7 @@
             <class name="BeginTestExecution"/>
             <class name="EmboldSignUpPageTests"/>
             <class name="EmboldSignInPageTests"/>
+            <class name="EmboldSignOutTests"/>
             <class name="EndTestExecution"/>
         </classes>
     </test>

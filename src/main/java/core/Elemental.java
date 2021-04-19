@@ -24,6 +24,9 @@ public class  Elemental {
     public static Capabilities caps;
     public static boolean pageState=false;
     public static String embURL=null;
+    public static boolean ghSignInState=false;
+    public static boolean bbSignInState=false;
+
 
 
     //Use maven dependency to create driver
@@ -45,7 +48,6 @@ public class  Elemental {
             options.addArguments("--test-type");
             options.addArguments("--disable-popup-blocking");
             driver = new ChromeDriver(options);
-
         } else if (browser.equalsIgnoreCase("firefox")) {
             System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver.exe");
             //WebDriverManager.firefoxdriver().setup();
@@ -78,8 +80,8 @@ public class  Elemental {
 
     public void WaitTillElementIsClickable(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(30))
-                .until(ExpectedConditions.elementToBeClickable(element));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public void WaitTillPresenceOfElementIsLocated(String elementLocator) {
@@ -88,6 +90,31 @@ public class  Elemental {
                 .until(ExpectedConditions.presenceOfElementLocated(element));
     }
 
+    public void ClickOnWebElement(String elementLocator)
+    {
+        By element = locatorParser.getElementLocator(elementLocator);
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click();", element);
+    }
+
+    public void FluentWaitForWebElement(String elementLocator)
+    {
+        By element = locatorParser.getElementLocator(elementLocator);
+        Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(driver)
+                .withTimeout(Duration.ofSeconds(60)) // this defines the total amount of time to wait for
+                .pollingEvery(Duration.ofSeconds(2)) // this defines the polling frequency
+                .ignoring(NoSuchElementException.class, TimeoutException.class); // this defines the exception to ignore
+        WebElement foo = fluentWait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver driver)  //in this method defined your own subjected conditions for which we need to wait for
+            {  return driver.findElement(element);
+            }});
+    }
+
+    public void WaitTillTextFieldIsReady(String elementLocator) {
+        By element = locatorParser.getElementLocator(elementLocator);
+        new WebDriverWait(driver, Duration.ofSeconds(30))
+                .until(ExpectedConditions.visibilityOf(driver.findElement(element)));
+    }
     public void tearDown() {
         try {
             caps = ((RemoteWebDriver) driver).getCapabilities();
