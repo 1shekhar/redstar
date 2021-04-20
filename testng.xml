@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="V2 Regression Tests">
+
+    <listeners>
+        <listener class-name="CustomTestListener.RetryAnnotationTransformer"/>
+    </listeners>
+
     <parameter name="browser" value="${browser}"/>
     <parameter name="appURL" value="${appURL}"/>
 

@@ -34,6 +34,7 @@ public class  Elemental {
             options.addArguments("start-maximized");
             options.addArguments("--disable-gpu");
             options.addArguments("enable-automation");
+            /*Avoid using headless mode. Some tests are failing in headless mode.*/
             //options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-infobars");
@@ -75,13 +76,13 @@ public class  Elemental {
 
     public void WaitTillElementIsClickable(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public void WaitTillPresenceOfElementIsLocated(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(30))
+        new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.presenceOfElementLocated(element));
     }
 
@@ -97,7 +98,7 @@ public class  Elemental {
         By element = locatorParser.getElementLocator(elementLocator);
         Wait<WebDriver> fluentWait = new FluentWait<>(driver)
                 /*Define total time you can wait for*/
-                .withTimeout(Duration.ofSeconds(60))
+                .withTimeout(Duration.ofSeconds(10))
                 /*Define polling frequency*/
                 .pollingEvery(Duration.ofSeconds(2))
                 /*Define Exceptions to be ignored*/
@@ -110,7 +111,7 @@ public class  Elemental {
 
     public void WaitTillTextFieldIsReady(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(30))
+        new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOf(driver.findElement(element)));
     }
     public void tearDown() {

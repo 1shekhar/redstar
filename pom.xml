@@ -17,7 +17,7 @@
 
     <profiles>
         <profile>
-            <id>appDetails</id>
+            <id>appConfig</id>
             <properties>
                 <browser>${browser}</browser>
                 <appURL>${appURL}</appURL>
