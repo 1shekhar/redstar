@@ -28,7 +28,7 @@ public class  Elemental {
     public void setWebDriver() {
         String browser = getBrowserName(browserName);
         if (browser.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "./src/main/resources/executables/chromedriver1.exe");
+            System.setProperty("webdriver.chrome.driver", "./src/main/resources/executables/chromedriver.exe");
             ChromeOptions options = new ChromeOptions();
             //WebDriverManager.chromedriver().setup();
             options.addArguments("start-maximized");
@@ -44,7 +44,7 @@ public class  Elemental {
             options.addArguments("--disable-popup-blocking");
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver1.exe");
+            System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver.exe");
             //WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
             driver.manage().window().maximize();
