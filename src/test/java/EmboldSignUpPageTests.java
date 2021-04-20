@@ -1,6 +1,6 @@
 import CustomTestListener.TestReportListener;
 import core.Elemental;
-import core.LocatorParser;
+import core.DataParser;
 import io.qameta.allure.*;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -23,7 +23,7 @@ public class EmboldSignUpPageTests extends Elemental {
         signInPage = new EmboldSignInPage();
         emboldSignUpPage = new EmboldSignUpPage();
         try {
-            locatorParser = new LocatorParser("./src/main/resources/Locators.properties");
+            locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }

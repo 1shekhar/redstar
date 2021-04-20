@@ -1,6 +1,6 @@
 import CustomTestListener.TestReportListener;
 import core.Elemental;
-import core.LocatorParser;
+import core.DataParser;
 import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
@@ -23,7 +23,8 @@ public class TermsAndServicePageTests extends Elemental {
     TermsAndServicePageTests() {
         super();
         try {
-            locatorParser = new LocatorParser("./src/main/resources/Locators.properties");
+            locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
+            userData = new DataParser("./src/main/resources/props/userData.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,10 +38,9 @@ public class TermsAndServicePageTests extends Elemental {
         /*Verify the user if exists in DB later and then proceed.
         Check for both GitHub and Bitbucket sign ups, with new login
          */
-        System.out.println(driver.getCurrentUrl());
         signInPage.DisplaySignInWithGitHubButton().click();
-        String username = locatorParser.getSingularProperty("gh_username");
-        String password = locatorParser.getSingularProperty("gh_password");
+        String username = userData.getSingularProperty("ghUsername_TSPage");
+        String password = userData.getSingularProperty("ghPassword_TSPage");
         gitHubSignInPage.ProvideGitHubCredentials(username,password);
     }
 

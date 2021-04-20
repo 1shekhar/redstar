@@ -7,8 +7,8 @@
     <test name="Embold V2 Sanity">
         <classes>
             <class name="BeginTestExecution"/>
-            <!--<class name="EmboldSignUpPageTests"/>
-            <class name="EmboldSignInPageTests"/>-->
+            <!--<class name="EmboldSignUpPageTests"/>-->
+            <!--<class name="EmboldSignInPageTests"/>-->
             <!--<class name="EmboldSignOutTests"/>-->
             <class name="TermsAndServicePageTests"/>
             <class name="EndTestExecution"/>

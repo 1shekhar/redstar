@@ -27,4 +27,12 @@
             <class name="EndTestExecution"/>
         </classes>
     </test>
+
+    <test name="Embold Terms And Services Validation">
+        <classes>
+            <class name="BeginTestExecution"/>
+            <class name="TermsAndServicePageTests"/>
+            <class name="EndTestExecution"/>
+        </classes>
+    </test>
 </suite>

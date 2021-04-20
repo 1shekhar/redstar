@@ -1,6 +1,6 @@
 import CustomTestListener.TestReportListener;
 import core.Elemental;
-import core.LocatorParser;
+import core.DataParser;
 import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
@@ -26,7 +26,8 @@ public class EmboldSignOutTests extends Elemental {
         signOutPage = new EmboldSignOutPanel();
         bitbucketSignInPage = new BitbucketSignInPage();
         try {
-            locatorParser = new LocatorParser("./src/main/resources/Locators.properties");
+            locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
+            userData = new DataParser("./src/main/resources/props/userData.properties");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,8 +43,8 @@ public class EmboldSignOutTests extends Elemental {
         {
             signInPage.DisplaySignInWithGitHubButton().click();
             if (!driver.getCurrentUrl().contains("gh")) {
-                String username = locatorParser.getSingularProperty("gh_username");
-                String password = locatorParser.getSingularProperty("gh_password");
+                String username = userData.getSingularProperty("gh_username");
+                String password = userData.getSingularProperty("gh_password");
                 gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
             }
             ghSignInState=true;
@@ -77,8 +78,8 @@ public class EmboldSignOutTests extends Elemental {
                 e.printStackTrace();
             }
             if (!driver.getCurrentUrl().contains("/organization/bb")) {
-                String username = locatorParser.getSingularProperty("bitbucket_username");
-                String password = locatorParser.getSingularProperty("bitbucket_password");
+                String username = userData.getSingularProperty("bitbucket_username");
+                String password = userData.getSingularProperty("bitbucket_password");
                 bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
             }
             bbSignInState=true;

@@ -13,13 +13,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.*;
 import java.time.Duration;
 import java.util.Properties;
-import java.util.function.Function;
 
 public class  Elemental {
 
     public static WebDriver driver;
     public static String browserName;
-    public static LocatorParser locatorParser;
+    public static DataParser locatorParser, userData;
     public static Capabilities caps;
     public static String embURL=null;
     public static boolean ghSignInState=false;
@@ -29,7 +28,7 @@ public class  Elemental {
     public void setWebDriver() {
         String browser = getBrowserName(browserName);
         if (browser.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "./src/main/resources/executables/chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver", "./src/main/resources/executables/chromedriver1.exe");
             ChromeOptions options = new ChromeOptions();
             //WebDriverManager.chromedriver().setup();
             options.addArguments("start-maximized");
@@ -45,7 +44,7 @@ public class  Elemental {
             options.addArguments("--disable-popup-blocking");
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver.exe");
+            System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver1.exe");
             //WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
             driver.manage().window().maximize();
