@@ -31,7 +31,7 @@ mkdir uitests && cd uitests
 git clone https://github.com/1shekhar/redstar
 ```
 
-Run maven goal. You can configure above goal by providing some custom `${env}` variables. Currently you can provide browser and platform on which tests needs to be run. 
+Run maven goal. You can configure maven goal by providing some custom `${env}` variables. Currently you can provide browser and platform on which tests needs to be run. 
 You can give your localhost URL too. For example,
 ```sh
 mvn clean install -Dbrowser=firefox
@@ -88,7 +88,7 @@ Build this Job with required parameters. Parameters are nothing but Environment 
 
 > Allure Report is generated on same Jenkins instance. You can view it same workspace.
 
-> You cannot execute this job for your local changes. For local, you need to configure project locally and follow previous instructions or give your machine IP as `${appURL}`to Jenkins build.
+> You cannot execute this job by providing `localhost` as `${appURL}`. For this purpose, either configure and run project locally by following previous instructions or give your machine IP as `${appURL}`to Jenkins build.
 
 > This job is configured to run on `master` node where all supported browsers are installed
 
@@ -96,7 +96,7 @@ Build this Job with required parameters. Parameters are nothing but Environment 
 
 Want to contribute? Great!
 
-Clone this repository and ask for collabortion access to owner.
+Clone this repository and ask for collaboration access to owner.
 #### Building for source
 
 _Currently there are some issues with some dependencies. Will share build steps later._
