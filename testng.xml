@@ -6,8 +6,13 @@
         <listener class-name="CustomTestListener.RetryAnnotationTransformer"/>
     </listeners>
 
-    <parameter name="browser" value="${browser}"/>
-    <parameter name="appURL" value="${appURL}"/>
+    <!--<test name="Embold Terms And Services Validation">
+        <classes>
+            <class name="BeginTestExecution"/>
+            <class name="TermsAndServicePageTests"/>
+            <class name="EndTestExecution"/>
+        </classes>
+    </test>-->
 
     <test name="Embold Sign Up Validation">
         <classes>
@@ -28,16 +33,11 @@
     <test name="Embold Sign out Validation">
         <classes>
             <class name="BeginTestExecution"/>
-            <class name="EmboldSignOutTests"/>
+            <class name="EmboldSignOutTestsForGitHub"/>
+            <class name="EmboldSignOutTestsForBitbucket"/>
             <class name="EndTestExecution"/>
         </classes>
     </test>
 
-    <test name="Embold Terms And Services Validation">
-        <classes>
-            <class name="BeginTestExecution"/>
-            <class name="TermsAndServicePageTests"/>
-            <class name="EndTestExecution"/>
-        </classes>
-    </test>
+
 </suite>

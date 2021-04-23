@@ -1,32 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>io.embold</groupId>
-    <artifactId>uitests</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+        <groupId>io.embold</groupId>
+        <artifactId>uitests</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <modelVersion>4.0.0</modelVersion>
+        <name>uitests</name>
+
 
     <properties>
         <suiteXmlFile>testng.xml</suiteXmlFile>
-        <browser>chrome</browser>
-        <appURL>https://app.gamma-staging.com</appURL>
         <aspectj.version>1.8.10</aspectj.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <profiles>
+        <!--default-profile-->
         <profile>
-            <id>appConfig</id>
+            <id>drone</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <properties>
-                <browser>${browser}</browser>
-                <appURL>${appURL}</appURL>
+                <env>drone</env>
             </properties>
         </profile>
+
+        <!--staging-profile-->
+        <profile>
+            <id>staging</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env>staging</env>
+            </properties>
+        </profile>
+
+        <!--prod-profile-->
+        <profile>
+            <id>prod</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <env>prod</env>
+            </properties>
+        </profile>
+
     </profiles>
 
     <build>
+        <filters>
+            <filter>src/main/resources/appConfig-${env}.properties</filter>
+        </filters>
+        <testOutputDirectory>target/classes</testOutputDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.properties</include>
+                    <include>core.LoadEnvProps</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+
+            <!-- display active profile in compile phase -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>show-profiles</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>active-profiles</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -48,6 +105,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
+
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
                     <suiteXmlFiles>
@@ -57,8 +115,6 @@
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
                     <systemPropertyVariables>
-                        <browser>${browser}</browser>
-                        <appURL>${appURL}</appURL>
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>
@@ -104,5 +160,4 @@
             <version>2.9.10</version>
         </dependency>
     </dependencies>
-
 </project>

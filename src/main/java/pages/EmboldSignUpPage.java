@@ -40,11 +40,4 @@ public class EmboldSignUpPage extends Elemental {
         return driver.findElement(locatorParser.
                 getElementLocator("signIn_link"));
     }
-
-    public void OpenSignUpPage()
-    {
-        EmboldSignInPage signInPage = new EmboldSignInPage();
-        signInPage.DisplaySignUpLink().click();
-
-    }
 }

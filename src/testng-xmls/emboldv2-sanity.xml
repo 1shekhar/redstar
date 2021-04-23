@@ -14,7 +14,7 @@
             <class name="BeginTestExecution"/>
             <class name="EmboldSignUpPageTests"/>
             <!--<class name="EmboldSignInPageTests"/>-->
-            <!--<class name="EmboldSignOutTests"/>-->
+            <!--<class name="EmboldSignOutTestsForBitbucket"/>-->
             <!--<class name="TermsAndServicePageTests"/>-->
             <class name="EndTestExecution"/>
         </classes>

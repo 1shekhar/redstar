@@ -31,15 +31,12 @@ public class BitbucketSignInPage extends Elemental {
 
     public void signInToEmboldUsingBitbucketCredentials(String username, String password)
     {
-        /*To do: 1. Encrypt and provide credentials. 2. Pass credentials via commandline
-        3. Simplify Login with independent singular methods.*/
-
         DisplayBitbucketUsernameField().sendKeys(username);
         DisplayBitbucketContinueButton().click();
         WaitTillTextFieldIsReady("bitbucket_password_field");
         DisplayBitbucketPasswordField().sendKeys(password);
         DisplayBitbucketLoginButton().click();
-         /*To DO: Logic to validate API response. Sometimes App is up but DB/Node gets crashed and user is
+        /*To DO: Logic to validate API response. Sometimes App is up but DB/Node gets crashed and user is
         unable to login to Embold. Can be validated using API endpoint.*/
         WaitTillPresenceOfElementIsLocated("loggedInUserAvatar");
     }

@@ -24,7 +24,7 @@ public class EmboldSignInPage extends Elemental {
     }
 
     public WebElement DisplaySignInWithGitHubButton() {
-        FluentWaitForWebElement("github-sign-in-button");
+        WaitTillElementIsClickable("github-sign-in-button");
         return driver.findElement(locatorParser.
                 getElementLocator("github-sign-in-button"));
     }

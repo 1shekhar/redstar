@@ -1,6 +1,7 @@
 import CustomTestListener.TestReportListener;
 import core.Elemental;
 import core.DataParser;
+import core.LoadEnvProps;
 import io.qameta.allure.*;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -29,7 +30,7 @@ public class EmboldSignInPageTests extends Elemental {
         signOutPage = new EmboldSignOutPanel();
         try {
             locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
-            userData = new DataParser("./src/main/resources/props/userData.properties");
+            loadEnvProps = new LoadEnvProps();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,7 +122,6 @@ public class EmboldSignInPageTests extends Elemental {
             driver.navigate().refresh();
             Assert.assertEquals(driver.getTitle(), "Embold | Next Level Static Code Analysis");
         }
-
     }
 
     @Story("Sign in using GitHub")
@@ -130,22 +130,33 @@ public class EmboldSignInPageTests extends Elemental {
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if user is able to Sign in to Embold using GitHub account credentials.")
     public void SignInToEmboldUsingGitHubAccountCredentials() {
-        if(driver.getCurrentUrl().contains("auth"))
-        {
+        if (driver.getCurrentUrl().contains("auth")) {
             signInPage.DisplaySignInWithGitHubButton().click();
-            if (!driver.getCurrentUrl().contains("gh")) {
-                String username = userData.getSingularProperty("gh_username");
-                String password = userData.getSingularProperty("gh_password");
-                gitHubSignInPage.signInToEmboldUsingGitHubCredentials(username, password);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            ghSignInState=true;
+            if (!driver.getCurrentUrl().contains("/organization/gh/")) {
+                gitHubSignInPage.ProvideGitHubCredentials(getPropertyValue("ghuser"),
+                        getPropertyValue("ghpass"));
+            }
+            ghSignInState = true;
+            WaitTillPresenceOfElementIsLocated("loggedInUserAvatar");
         }
         Assert.assertTrue(repositoryListPage.DisplayEmboldLogoOnRepositoryListPage().isDisplayed());
-        if(ghSignInState)
-        {
+
+        /*Logout is added for chained test cases*/
+        if (ghSignInState) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             repositoryListPage.DisplayUserAvatarInHeader().click();
             signOutPage.DisplaySignOutButton().click();
-            ghSignInState=false;
+            WaitTillPresenceOfElementIsLocated("login_illustration");
+            ghSignInState = false;
         }
     }
 
@@ -155,22 +166,34 @@ public class EmboldSignInPageTests extends Elemental {
     @Severity(SeverityLevel.CRITICAL)
     @Step("Check if user is able to Sign in to Embold using Bitbucket account credentials.")
     public void SignInToEmboldUsingBitbucketAccountCredentials() {
-        if(driver.getCurrentUrl().contains("auth"))
-        {
+        if (driver.getCurrentUrl().contains("auth")) {
             signInPage.DisplaySignInWithBitbucketButton().click();
-            if (!driver.getCurrentUrl().contains("bb")) {
-                String username = userData.getSingularProperty("bitbucket_username");
-                String password = userData.getSingularProperty("bitbucket_password");
-                bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(username, password);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            bbSignInState=true;
+            if (!driver.getCurrentUrl().contains("/organization/bb")) {
+                bitbucketSignInPage.signInToEmboldUsingBitbucketCredentials(
+                        getPropertyValue("bbuser"),
+                        getPropertyValue("bbpass"));
+            }
+            bbSignInState = true;
+            WaitTillPresenceOfElementIsLocated("loggedInUserAvatar");
         }
         Assert.assertTrue(repositoryListPage.DisplayEmboldLogoOnRepositoryListPage().isDisplayed());
-        if(bbSignInState)
-        {
+
+        /*Logout is added for chained test cases*/
+        if (bbSignInState) {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             repositoryListPage.DisplayUserAvatarInHeader().click();
             signOutPage.DisplaySignOutButton().click();
-            bbSignInState=false;
+            WaitTillPresenceOfElementIsLocated("login_illustration");
+            bbSignInState = false;
         }
     }
 }

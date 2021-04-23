@@ -57,5 +57,4 @@ public class DataParser {
         return propFile.getProperty(propKey);
     }
 
-
 }

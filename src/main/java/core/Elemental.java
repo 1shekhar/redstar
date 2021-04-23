@@ -17,14 +17,25 @@ import java.util.Properties;
 public class  Elemental {
 
     public static WebDriver driver;
+    public WebElement element;
     public static String browserName;
-    public static DataParser locatorParser, userData;
+    public static DataParser locatorParser;
+    public static LoadEnvProps loadEnvProps;
     public static Capabilities caps;
     public static String embURL=null;
     public static boolean ghSignInState=false;
     public static boolean bbSignInState=false;
 
-    //Use maven dependency to create driver
+    /*To Do:Use maven dependency to create driver*/
+    public String getBrowserName(String browser) {
+        browserName = browser;
+        return browserName;
+    }
+
+    public Elemental()
+    {
+        loadEnvProps = new LoadEnvProps();
+    }
     public void setWebDriver() {
         String browser = getBrowserName(browserName);
         if (browser.equalsIgnoreCase("chrome")) {
@@ -63,16 +74,17 @@ public class  Elemental {
         waitTillWholePageIsLoaded();
     }
 
+    public String getPropertyValue(String key)
+    {
+        return (String) loadEnvProps.loadPropertiesFile("appConfig.properties").get(key);
+    }
+
     public void waitTillWholePageIsLoaded()
     {
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(
                 driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
     }
 
-    public String getBrowserName(String browser) {
-        browserName = browser;
-        return browserName;
-    }
 
     public void WaitTillElementIsClickable(String elementLocator) {
         By element = locatorParser.getElementLocator(elementLocator);
@@ -86,21 +98,14 @@ public class  Elemental {
                 .until(ExpectedConditions.presenceOfElementLocated(element));
     }
 
-    public void ClickOnWebElement(String elementLocator)
-    {
-        By element = locatorParser.getElementLocator(elementLocator);
-        JavascriptExecutor executor = (JavascriptExecutor)driver;
-        executor.executeScript("arguments[0].click();", element);
-    }
-
     public void FluentWaitForWebElement(String elementLocator)
     {
         By element = locatorParser.getElementLocator(elementLocator);
         Wait<WebDriver> fluentWait = new FluentWait<>(driver)
                 /*Define total time you can wait for*/
-                .withTimeout(Duration.ofSeconds(10))
+                .withTimeout(Duration.ofSeconds(5))
                 /*Define polling frequency*/
-                .pollingEvery(Duration.ofSeconds(2))
+                .pollingEvery(Duration.ofSeconds(1))
                 /*Define Exceptions to be ignored*/
                 .ignoring(NoSuchElementException.class, TimeoutException.class);
         WebElement ele = fluentWait.until(driver -> {

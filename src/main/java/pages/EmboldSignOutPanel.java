@@ -11,15 +11,10 @@ public class EmboldSignOutPanel extends Elemental {
     }
 
     public WebElement DisplaySignOutButton() {
-        //WaitTillPresenceOfElementIsLocated("signOutButton");
-        FluentWaitForWebElement("signOutButton");
+        WaitTillPresenceOfElementIsLocated("signOutButton");
         return driver.findElement(locatorParser.
                 getElementLocator("signOutButton"));
     }
 
-    public void ClickSignOutButton(String locator)
-    {
-        ClickOnWebElement(locator);
-    }
 
 }

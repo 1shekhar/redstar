@@ -1,7 +1,9 @@
 import CustomTestListener.TestReportListener;
 import core.Elemental;
 import core.DataParser;
+import core.LoadEnvProps;
 import io.qameta.allure.*;
+import org.openqa.selenium.devtools.v85.network.Network;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -23,8 +25,8 @@ public class TermsAndServicePageTests extends Elemental {
     TermsAndServicePageTests() {
         super();
         try {
-            locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
-            userData = new DataParser("./src/main/resources/props/userData.properties");
+            locatorParser =new DataParser("./src/main/resources/props/Locators.properties");
+            loadEnvProps=new LoadEnvProps();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,10 +40,20 @@ public class TermsAndServicePageTests extends Elemental {
         /*Verify the user if exists in DB later and then proceed.
         Check for both GitHub and Bitbucket sign ups, with new login
          */
+
         signInPage.DisplaySignInWithGitHubButton().click();
-        String username = userData.getSingularProperty("ghUsername_TSPage");
-        String password = userData.getSingularProperty("ghPassword_TSPage");
-        gitHubSignInPage.ProvideGitHubCredentials(username,password);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        gitHubSignInPage.ProvideGitHubCredentials(getPropertyValue("ghUsername_TSPage"),
+                getPropertyValue("ghPassword_TSPage"));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Story("Terms and Service page validations")
@@ -52,8 +64,7 @@ public class TermsAndServicePageTests extends Elemental {
     public void ValidateConsentPageURL()
     {
         OpenTermsAndServicePage();
-        FluentWaitForWebElement("terms_service_illustration");
-        Assert.assertEquals(driver.getCurrentUrl(),embURL+"/auth/consent/gh");
+        Assert.assertEquals(driver.getCurrentUrl(),getPropertyValue("appUrl")+"auth/consent/gh");
     }
 
     @Story("Terms and Service page validations")
