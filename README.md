@@ -1,4 +1,5 @@
 # Embolder - Embold Test Automation
+
 ### _Automated validation for UI, API and DB_
 ------
 
@@ -22,6 +23,7 @@ Following configuration is needed in order to run this project locally.
 > After installing above, make sure you have three environment variables set in your local machine - `${JAVA_HOME}`, `${M2_HOME}`, `${ALLURE_HOME}`
 
 ## Test Execution
+
 Test execution is much simpler. You can do this by executing only one command or by running preconfigured Jenkins job.
 
 Clone this repository
@@ -31,15 +33,19 @@ mkdir uitests && cd uitests
 git clone https://github.com/1shekhar/redstar
 ```
 
-Run maven goal. You can configure maven goal by providing some custom `${env}` variables. Currently you can provide browser and platform on which tests needs to be run. 
-You can give your localhost URL too. For example,
+Run maven goal. You can configure maven goal by providing some custom `${env}` variables. Currently you can provide
+browser and platform on which tests needs to be run. You can give your localhost URL too. For example,
+
 ```sh
 mvn clean install -Dbrowser=firefox
 ```
+
 or
+
 ```sh
 mvn clean install -Dbrowser=edge -DappURL=https://v2.emboldct.dev
 ```
+
 ### Supported Environment Variables
 
 | Environment Variable | Supported Value | Default Value |
@@ -51,30 +57,36 @@ mvn clean install -Dbrowser=edge -DappURL=https://v2.emboldct.dev
 | bbUser | Provide Bitbucket Username | NA |
 | bbPass | Provide Bitbucket Password | NA |
 
-When you run mvn command without providing any custom `${env}` by simply executing 
+When you run mvn command without providing any custom `${env}` by simply executing
+
 ```sh
 mvn clean install
 ```
-Execution will be carried out with **Google Chrome** in non-headless mode on **[V2 Staging](https://app.gamma-staging.com)** 
+
+Execution will be carried out with **Google Chrome** in non-headless mode
+on **[V2 Staging](https://app.gamma-staging.com)**
 In this case, tests will use **Test_Credentials** of GitHub and Bitbucket account logins.
 > Please note, execution will fail if Google Chrome or the browser you selected for execution is not installed on your local machine.
 
 ## Test Report Generation
 
-Test report generation is carried out by using Allure framework. 
-After successful / unsuccessful execution, **allure-results** directory gets created at root location (where pom.xml is located).
-Simply run below command at root location
+Test report generation is carried out by using Allure framework. After successful / unsuccessful execution, **
+allure-results** directory gets created at root location (where pom.xml is located). Simply run below command at root
+location
+
 ```sh
 allure serve allure-results
 ```
+
 _That's all!!! All you need to do is, run__
 
 **`mvn clean install && allure serve allure-results`**
 
-Whenever new changes are deployed, you can run above command with your required `${env}` values and see the generated report right after execution.
+Whenever new changes are deployed, you can run above command with your required `${env}` values and see the generated
+report right after execution.
 
 
->Note: Allure report is not static report and hence cannot be downloaded. Refer [this issue](https://github.com/allure-framework/allure2/issues/755)
+> Note: Allure report is not static report and hence cannot be downloaded. Refer [this issue](https://github.com/allure-framework/allure2/issues/755)
 
 --------------------------------------
 
@@ -84,7 +96,8 @@ Whenever new changes are deployed, you can run above command with your required 
 In order to run the tests remotely on Jenkins, you can refer below job.
 > http://192.168.2.24:8080/job/emboldv2/job/embolder/
 
-Build this Job with required parameters. Parameters are nothing but Environment Variables we do provide to this project. In case no values provided, tests will run with default configuration as mentioned earlier.
+Build this Job with required parameters. Parameters are nothing but Environment Variables we do provide to this project.
+In case no values provided, tests will run with default configuration as mentioned earlier.
 
 > Allure Report is generated on same Jenkins instance. You can view it same workspace.
 
@@ -97,6 +110,7 @@ Build this Job with required parameters. Parameters are nothing but Environment 
 Want to contribute? Great!
 
 Clone this repository and ask for collaboration access to owner.
+
 #### Building for source
 
 _Currently there are some issues with some dependencies. Will share build steps later._

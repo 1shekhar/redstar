@@ -17,10 +17,16 @@ public class DataParser {
         propFile.load(stream);
     }
 
+   /* public static void main(String[] args) throws IOException {
+        DataParser dataParser = new DataParser("./src/main/resources/props/Locators.properties");
+        System.out.println("SSS::::" + dataParser.getSingularProperty("firstAddOrg_button"));
+
+    }*/
+
     public By getElementLocator(String locatorLabel) {
         String locatorProperty = propFile.getProperty(locatorLabel);
-        String locatorType = locatorProperty.split(":")[0];
-        String locatorValue = locatorProperty.split(":")[1];
+        String locatorType = locatorProperty.split("!")[0];
+        String locatorValue = locatorProperty.split("!")[1];
         By locator;
 
         switch (locatorType) {
@@ -53,8 +59,6 @@ public class DataParser {
     }
 
     public String getSingularProperty(String propKey) {
-
         return propFile.getProperty(propKey);
     }
-
 }

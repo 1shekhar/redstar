@@ -1,5 +1,7 @@
 package core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -10,21 +12,100 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import java.io.*;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Properties;
 
-public class  Elemental {
+public class Elemental {
+
+    private static final Logger logger = LogManager.getLogger(Elemental.class.getName());
 
     public static WebDriver driver;
-    public WebElement element;
     public static String browserName;
     public static DataParser locatorParser;
     public static LoadEnvProps loadEnvProps;
     public static Capabilities caps;
-    public static String embURL=null;
-    public static boolean ghSignInState=false;
-    public static boolean bbSignInState=false;
+    public static String embURL = null;
+    public static boolean ghSignInState;
+    public static boolean bbSignInState = false;
+    public static List<String> listValues;
+
+    //To to: Implement OS independent paths later. For ex, getCanonical methods.
+    static {
+        try {
+            locatorParser = new DataParser("./src/main/resources/props/Locators.properties");
+            loadEnvProps = new LoadEnvProps();
+        } catch (IOException e) {
+            logger.error("Locatore resource file not found. Terminating execution.");
+            e.getStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    public WebElement element;
+
+    public static WebElement getClickableElement(String locatorKey, int waitPeriod) {
+        By element = locatorParser.getElementLocator(locatorKey);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(waitPeriod));
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        return driver.findElement(element);
+    }
+
+    public static void fluentWaitForWebElement(String locatorKey) throws TimeoutException {
+        By waitElement = locatorParser.getElementLocator(locatorKey);
+        Wait<WebDriver> fluentWait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(6))
+                .pollingEvery(Duration.ofSeconds(2))
+                .ignoring(NoSuchElementException.class, TimeoutException.class);
+        WebElement ele = fluentWait.until(driver -> driver.findElement(waitElement));
+    }
+
+    public static WebElement fluentWaitWithCustomTimeout(String locatorKey, int timeout) throws TimeoutException {
+        By waitElement = locatorParser.getElementLocator(locatorKey);
+        Wait<WebDriver> fluentWait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(timeout))
+                .pollingEvery(Duration.ofSeconds(1))
+                .ignoring(NoSuchElementException.class, TimeoutException.class);
+        return fluentWait.until(driver -> driver.findElement(waitElement));
+    }
+
+
+    public static boolean checkIfElementPresent(String locatorKey) {
+        By waitElement = locatorParser.getElementLocator(locatorKey);
+        return driver.findElement(waitElement).isDisplayed();
+    }
+
+    //To do: Will be removed after implementation of Selenium waits and Thread synchronozation.
+    //Execution time will be reduced approximately by 50%
+    public static void waitTillRequestIsProcessed(int period) {
+
+        try {
+            Thread.sleep(period * 1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static WebElement getWebElement(String locatorKey) {
+        return driver.findElement(locatorParser.
+                getElementLocator(locatorKey));
+    }
+
+    public static String getLanguageOfBrowser() {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        return (String) js.executeScript("return window.navigator.language");
+    }
+
+    public List<WebElement> getElementsList(String locatorKey) {
+        List<WebElement> list;
+        By waitElement = locatorParser.getElementLocator(locatorKey);
+        list = driver.findElements(waitElement);
+        return list;
+    }
 
     /*To Do:Use maven dependency to create driver*/
     public String getBrowserName(String browser) {
@@ -32,29 +113,42 @@ public class  Elemental {
         return browserName;
     }
 
-    public Elemental()
-    {
-        loadEnvProps = new LoadEnvProps();
-    }
     public void setWebDriver() {
         String browser = getBrowserName(browserName);
         if (browser.equalsIgnoreCase("chrome")) {
+            logger.info("Execution is started on Google Chrome");
             System.setProperty("webdriver.chrome.driver", "./src/main/resources/executables/chromedriver.exe");
             ChromeOptions options = new ChromeOptions();
             //WebDriverManager.chromedriver().setup();
+            //*for devtools option, pass below arg*//*
+            //options.addArguments("--auto-open-devtools-for-tabs");
             options.addArguments("start-maximized");
             options.addArguments("--disable-gpu");
             options.addArguments("enable-automation");
-            /*Avoid using headless mode. Some tests are failing in headless mode.*/
+            //*Avoid using headless mode. Some tests are failing in headless mode.*//*
             //options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-infobars");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--disable-browser-side-navigation");
-            options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+            options.setPageLoadStrategy(PageLoadStrategy.EAGER);
             options.addArguments("--test-type");
             options.addArguments("--disable-popup-blocking");
             driver = new ChromeDriver(options);
+            /*LoggingPreferences loggingprefs = new LoggingPreferences();
+            loggingprefs.enable(LogType.PERFORMANCE, Level.WARNING);
+
+            DesiredCapabilities capabilities = new ChromeDriver(options);
+            capabilities.setCapability(ChromeOptions.CAPABILITY,options);
+            capabilities.setCapability(CapabilityType.LOGGING_PREFS, loggingprefs);
+            driver = new ChromeDriver(capabilities);
+            LogEntries logEntries = driver.manage().logs()
+                    .get(org.openqa.selenium.logging.LogType.BROWSER);
+            for (LogEntry entry : logEntries) {
+                System.out.println((String.format("%s %s %s\n", new Date(entry.getTimestamp()), entry.getLevel(),
+                        entry.getMessage())));
+            }*/
+            getLanguageOfBrowser();
         } else if (browser.equalsIgnoreCase("firefox")) {
             System.setProperty("webdriver.gecko.driver", "./src/main/resources/executables/geckodriver.exe");
             //WebDriverManager.firefoxdriver().setup();
@@ -68,63 +162,26 @@ public class  Elemental {
         }
     }
 
-    public void OpenPlatform(String appURL) {
-        embURL=appURL;
+    public void openPlatform(String appURL) {
+        embURL = appURL;
         driver.get(embURL);
         waitTillWholePageIsLoaded();
     }
 
-    public String getPropertyValue(String key)
-    {
+    public String getPropertyValue(String key) {
         return (String) loadEnvProps.loadPropertiesFile("appConfig.properties").get(key);
     }
 
-    public void waitTillWholePageIsLoaded()
-    {
+    public void waitTillWholePageIsLoaded() {
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(
                 driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
     }
 
-
-    public void WaitTillElementIsClickable(String elementLocator) {
-        By element = locatorParser.getElementLocator(elementLocator);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-    }
-
-    public void WaitTillPresenceOfElementIsLocated(String elementLocator) {
-        By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(element));
-    }
-
-    public void FluentWaitForWebElement(String elementLocator)
-    {
-        By element = locatorParser.getElementLocator(elementLocator);
-        Wait<WebDriver> fluentWait = new FluentWait<>(driver)
-                /*Define total time you can wait for*/
-                .withTimeout(Duration.ofSeconds(5))
-                /*Define polling frequency*/
-                .pollingEvery(Duration.ofSeconds(1))
-                /*Define Exceptions to be ignored*/
-                .ignoring(NoSuchElementException.class, TimeoutException.class);
-        WebElement ele = fluentWait.until(driver -> {
-            /*Define subjected conditions for which we need to wait for*/
-            return driver.findElement(element);
-        });
-    }
-
-    public void WaitTillTextFieldIsReady(String elementLocator) {
-        By element = locatorParser.getElementLocator(elementLocator);
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOf(driver.findElement(element)));
-    }
     public void tearDown() {
         try {
             caps = ((RemoteWebDriver) driver).getCapabilities();
-            //Currently done only for Google chrome.
-            //To DO: Generate Env Props for Firefox and MS Edge
-            CreateEnvironmentProperties();
+            //To DO: Generate All Env Props for Firefox and MS Edge
+            createEnvironmentProperties();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -132,25 +189,24 @@ public class  Elemental {
         driver.quit();
     }
 
-    public void CreateEnvironmentProperties() throws IOException {
+    public void createEnvironmentProperties() throws IOException {
+
         File envProps = new File(".//allure-results//environment.properties");
-        if(envProps.exists() && !envProps.isDirectory())
-        {
+        if (envProps.exists() && !envProps.isDirectory()) {
             envProps.createNewFile();
         }
         FileOutputStream propFile = new FileOutputStream(envProps, false);
-            try
-            {
-                Properties prop = new Properties();
-                prop.setProperty("Embold URL",embURL);
-                prop.setProperty("Platform", System.getProperty("os.name"));
-                prop.setProperty("BrowserName", String.valueOf(caps.getCapability("browserName")));
-                prop.setProperty("BrowserVersion", String.valueOf(caps.getCapability("browserVersion")));
-                prop.setProperty("ScreenResolution",String.valueOf(driver.manage().window().getSize()));
-                prop.setProperty("ExecutedBy",System.getProperty("user.name"));
-                prop.store(propFile, null);
-            } catch (IOException io) {
-                io.printStackTrace();
-            }
+        try {
+            Properties prop = new Properties();
+            prop.setProperty("Embold URL", embURL);
+            prop.setProperty("Platform", System.getProperty("os.name"));
+            prop.setProperty("BrowserName", String.valueOf(caps.getCapability("browserName")));
+            prop.setProperty("BrowserVersion", String.valueOf(caps.getCapability("browserVersion")));
+            prop.setProperty("ScreenResolution", String.valueOf(driver.manage().window().getSize()));
+            prop.setProperty("ExecutedBy", System.getProperty("user.name"));
+            prop.store(propFile, "");
+        } catch (IOException io) {
+            io.printStackTrace();
         }
+    }
 }
